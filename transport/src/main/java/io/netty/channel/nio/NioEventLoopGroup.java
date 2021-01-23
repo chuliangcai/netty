@@ -57,6 +57,9 @@ public class NioEventLoopGroup extends MultithreadEventLoopGroup {
      * {@link SelectorProvider} which is returned by {@link SelectorProvider#provider()}.
      */
     public NioEventLoopGroup(ThreadFactory threadFactory) {
+        // TODO: 2021/1/23 spi方式获取SelectorProvider
+        // TODO: 2021/1/23 mac下的jdk默认返回KQueueSelectorProvider
+        // TODO: 2021/1/23 windows下的jdk默认范围是WindowsSelectorProvider
         this(0, threadFactory, SelectorProvider.provider());
     }
 

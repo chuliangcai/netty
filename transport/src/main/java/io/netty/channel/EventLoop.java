@@ -24,6 +24,7 @@ import io.netty.util.concurrent.OrderedEventExecutor;
  * implementation details and internals.
  *
  */
+// TODO: 2021/1/23 一个EventLoop中只有一个Thread,可以理解为是一个用于处理事件的线程
 public interface EventLoop extends OrderedEventExecutor, EventLoopGroup {
     @Override
     EventLoopGroup parent();

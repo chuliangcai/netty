@@ -304,9 +304,11 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         }
     }
 
+    // TODO: 2021/1/23 初始化
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
+            // TODO: 2021/1/23 此channel一般是NioServerSocketChannel
             channel = channelFactory.newChannel();
             init(channel);
         } catch (Throwable t) {
@@ -319,7 +321,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
-
+        // TODO: 2021/1/23 开始注册
+        // TODO: 2021/1/23 为什么bossGroup只需要一个线程，因为通常只需要调用一次register->doBind->initAndRegister
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {

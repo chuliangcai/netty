@@ -162,6 +162,8 @@ import java.util.concurrent.TimeUnit;
  * }
  * </pre>
  */
+// TODO: 2021/1/23 Netty 里面的IO操作全部是异步的。这意味着，IO操作会立即返回，
+//  但是在调用结束时，无法保证IO操作已完成。取而代之，将会返回给你一个ChannelFuture 实例，提供IO操作的结果信息或状态。
 public interface ChannelFuture extends Future<Void> {
 
     /**

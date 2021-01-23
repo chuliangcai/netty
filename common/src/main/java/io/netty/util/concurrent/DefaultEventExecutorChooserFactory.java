@@ -30,8 +30,10 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
 
     private DefaultEventExecutorChooserFactory() { }
 
+    // TODO: 2021/1/23 设计模式：策略模式
     @Override
     public EventExecutorChooser newChooser(EventExecutor[] executors) {
+        // TODO: 2021/1/23 如果是2的幂，那么就走位运算 所以线程池长度推荐2的幂
         if (isPowerOfTwo(executors.length)) {
             return new PowerOfTwoEventExecutorChooser(executors);
         } else {
@@ -43,6 +45,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
         return (val & -val) == val;
     }
 
+    // TODO: 2021/1/23 位运算取EventLoop
     private static final class PowerOfTwoEventExecutorChooser implements EventExecutorChooser {
         private final AtomicInteger idx = new AtomicInteger();
         private final EventExecutor[] executors;
@@ -57,6 +60,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
         }
     }
 
+    // TODO: 2021/1/23 对线程池长度取模得到EventLoop
     private static final class GenericEventExecutorChooser implements EventExecutorChooser {
         // Use a 'long' counter to avoid non-round-robin behaviour at the 32-bit overflow boundary.
         // The 64-bit long solves this by placing the overflow so far into the future, that no system

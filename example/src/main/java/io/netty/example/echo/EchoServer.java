@@ -33,6 +33,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 /**
  * Echoes back any received data from a client.
  */
+// TODO: 2021/1/23 打印客户端输入的数据
 public final class EchoServer {
 
     static final boolean SSL = System.getProperty("ssl") != null;
@@ -48,7 +49,12 @@ public final class EchoServer {
             sslCtx = null;
         }
 
+        // TODO: 2021/1/23 Netty的服务端使用了两个EventLoopGroup，而第一个EventLoopGroup通常只有一个EventLoop，
+        //  通常叫做bossGroup，负责客户端的连接请求，然后打开Channel，交给后面的EventLoopGroup中的一个EventLoop来负责这个Channel上的所有读写事件，
+        //  一个Channel只会被一个EventLoop处理，而一个EventLoop可能会被分配给多个Channel来负责上面的事件
+
         // Configure the server.
+        // TODO: 2021/1/23 主线程只有一个
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         final EchoServerHandler serverHandler = new EchoServerHandler();

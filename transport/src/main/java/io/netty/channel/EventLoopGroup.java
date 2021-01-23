@@ -22,6 +22,8 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * processed for later selection during the event loop.
  *
  */
+// TODO: 2021/1/23 EventLoop当做是Reactor线程模型中的一个线程，而一个EventLoopGroup类似于一个ExecutorService，
+//  当然，这只是为了更好的理解Netty的线程模型，它们之间是没有等价关系的
 public interface EventLoopGroup extends EventExecutorGroup {
     /**
      * Return the next {@link EventLoop} to use
