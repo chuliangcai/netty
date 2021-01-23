@@ -142,7 +142,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         }
         final Entry<AttributeKey<?>, Object>[] currentChildAttrs = childAttrs.entrySet().toArray(EMPTY_ATTRIBUTE_ARRAY);
 
-        // TODO: 2021/1/23 添加channelHandler
+        // TODO: 2021/1/23 给pipeline添加channelHandler
+        // TODO: 2021/1/23 ChannelInitializer相当于是一个媒介
         p.addLast(new ChannelInitializer<Channel>() {
             @Override
             public void initChannel(final Channel ch) {
@@ -152,6 +153,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                     pipeline.addLast(handler);
                 }
 
+                // TODO: 2021/1/23 添加一个 ServerBootstrapAcceptor的handler
+                // TODO: 2021/1/23 ServerBootstrapAcceptor负责接受客户端连接创建连接后，对连接的初始化工作
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {

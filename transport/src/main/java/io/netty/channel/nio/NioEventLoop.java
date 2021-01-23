@@ -111,6 +111,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     /**
      * The NIO {@link Selector}.
      */
+    // TODO: 2021/1/23 绑定的Selector
     private Selector selector;
     private Selector unwrappedSelector;
     private SelectedSelectionKeySet selectedKeys;
@@ -167,7 +168,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
     }
 
+    // TODO: 2021/1/23 获取selector
     private SelectorTuple openSelector() {
+        // TODO: 2021/1/23 获取一个jdk的Selector
         final Selector unwrappedSelector;
         try {
             unwrappedSelector = provider.openSelector();

@@ -269,6 +269,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     }
 
     private ChannelFuture doBind(final SocketAddress localAddress) {
+        // TODO: 2021/1/23 初始化的动作是异步的，所以返回的是个Future
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
         if (regFuture.cause() != null) {
@@ -276,11 +277,13 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         }
 
         if (regFuture.isDone()) {
+            // TODO: 2021/1/23 如果初始化完成了，直接执行bind方法
             // At this point we know that the registration was complete and successful.
             ChannelPromise promise = channel.newPromise();
             doBind0(regFuture, channel, localAddress, promise);
             return promise;
         } else {
+            // TODO: 2021/1/23 如果没有完成添加一个监听器 在回调里执行doBind方法
             // Registration future is almost always fulfilled already, but just in case it's not.
             final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
             regFuture.addListener(new ChannelFutureListener() {
@@ -308,8 +311,9 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
-            // TODO: 2021/1/23 此channel一般是NioServerSocketChannel
+            // TODO: 2021/1/23 工厂方法返回一个Channel 此channel一般是NioServerSocketChannel
             channel = channelFactory.newChannel();
+            // TODO: 2021/1/23 对channel进行初始化
             init(channel);
         } catch (Throwable t) {
             if (channel != null) {
@@ -321,7 +325,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
-        // TODO: 2021/1/23 开始注册
+        // TODO: 2021/1/23 开始注册 将NioServerSocketChannel注册到BossGroup的EventLoop绑定的Selector上
         // TODO: 2021/1/23 为什么bossGroup只需要一个线程，因为通常只需要调用一次register->doBind->initAndRegister
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {

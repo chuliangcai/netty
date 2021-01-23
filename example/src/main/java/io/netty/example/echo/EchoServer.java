@@ -77,6 +77,7 @@ public final class EchoServer {
              });
 
             // Start the server.
+            // TODO: 2021/1/23 启动server
             ChannelFuture f = b.bind(PORT).sync();
 
             // Wait until the server socket is closed.
