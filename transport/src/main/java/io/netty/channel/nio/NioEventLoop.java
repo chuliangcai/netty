@@ -434,6 +434,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
     }
 
+    // TODO: 2021/1/24 循环执行select
     @Override
     protected void run() {
         int selectCnt = 0;
@@ -449,6 +450,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                     case SelectStrategy.BUSY_WAIT:
                         // fall-through to SELECT since the busy-wait is not supported with NIO
 
+                        // TODO: 2021/1/24 默认模式
                     case SelectStrategy.SELECT:
                         long curDeadlineNanos = nextScheduledTaskDeadlineNanos();
                         if (curDeadlineNanos == -1L) {
@@ -493,6 +495,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 } else if (strategy > 0) {
                     final long ioStartTime = System.nanoTime();
                     try {
+                        // TODO: 2021/1/24 当有OP_ACCEPT事件来的时候进行处理
                         processSelectedKeys();
                     } finally {
                         // Ensure we always run tasks.
@@ -652,6 +655,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             // See https://github.com/netty/netty/issues/2363
             selectedKeys.keys[i] = null;
 
+            // TODO: 2021/1/24 attach实际就是NioServerSocketChannel
             final Object a = k.attachment();
 
             if (a instanceof AbstractNioChannel) {
@@ -719,6 +723,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
             // to a spin loop
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                // TODO: 2021/1/24 unsafe实际是NioMessageUnsafe
                 unsafe.read();
             }
         } catch (CancelledKeyException ignored) {

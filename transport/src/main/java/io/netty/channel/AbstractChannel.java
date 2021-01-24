@@ -464,10 +464,14 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
 
             AbstractChannel.this.eventLoop = eventLoop;
 
+            // TODO: 2021/1/23 判断当前线程是不是eventLoop线程
             if (eventLoop.inEventLoop()) {
                 register0(promise);
             } else {
                 try {
+                    // TODO: 2021/1/23 将register封装成一个task丢给eventLoop去执行
+                    // TODO: 2021/1/23 所以真正执行注册的是eventLoop线程
+                    // TODO: 2021/1/24 注意此处的eventLoop可能是bossEventLoop也可能是WorkerEventLoop 
                     eventLoop.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -493,6 +497,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     return;
                 }
                 boolean firstRegistration = neverRegistered;
+                // TODO: 2021/1/23 真正注册的方法
                 doRegister();
                 neverRegistered = false;
                 registered = true;
@@ -507,6 +512,8 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 // multiple channel actives if the channel is deregistered and re-registered.
                 if (isActive()) {
                     if (firstRegistration) {
+                        // TODO: 2021/1/24 此处如果是WorkerEventLoop,注册之后就直接是isActive的状态，然后调用fireChannelActive
+                        // TODO: 2021/1/24 此处会调用pipeline的HeadContext的read方法注册OPT_READ事件
                         pipeline.fireChannelActive();
                     } else if (config().isAutoRead()) {
                         // This channel was registered before and autoRead() is set. This means we need to begin read
@@ -558,6 +565,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        // TODO: 2021/1/23
                         pipeline.fireChannelActive();
                     }
                 });

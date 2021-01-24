@@ -299,6 +299,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
                         // See https://github.com/netty/netty/issues/2586
                         promise.registered();
 
+                        // TODO: 2021/1/23 执行绑定逻辑 实际是将对应的java的ServerSocketChannel绑定地址和端口
+                        // TODO: 2021/1/23 也是丢到了boss线程去执行
                         doBind0(regFuture, channel, localAddress, promise);
                     }
                 }
@@ -328,6 +330,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         // TODO: 2021/1/23 开始注册 将NioServerSocketChannel注册到BossGroup的EventLoop绑定的Selector上
         // TODO: 2021/1/23 为什么bossGroup只需要一个线程，因为通常只需要调用一次register->doBind->initAndRegister
         ChannelFuture regFuture = config().group().register(channel);
+        // TODO: 2021/1/23 ChannelFuture是注册后的结果
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {
                 channel.close();

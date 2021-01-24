@@ -143,6 +143,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         final Entry<AttributeKey<?>, Object>[] currentChildAttrs = childAttrs.entrySet().toArray(EMPTY_ATTRIBUTE_ARRAY);
 
         // TODO: 2021/1/23 给pipeline添加channelHandler
+        // TODO: 2021/1/23 ChannelInitializer是一个一次性的handler，用完就会被移除
         // TODO: 2021/1/23 ChannelInitializer相当于是一个媒介
         p.addLast(new ChannelInitializer<Channel>() {
             @Override
@@ -212,6 +213,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         @Override
         @SuppressWarnings("unchecked")
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            // TODO: 2021/1/24 msg其实就是NioSocketChannel
             final Channel child = (Channel) msg;
 
             child.pipeline().addLast(childHandler);
@@ -220,7 +222,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             setAttributes(child, childAttrs);
 
             try {
-                // TODO: 2021/1/23 将SocketChannel注册到子的EventLoopGroup
+                // TODO: 2021/1/23 将NioSocketChannel注册到子的EventLoopGroup
+                // TODO: 2021/1/24 和NioServerSocketChannel流程类似
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {

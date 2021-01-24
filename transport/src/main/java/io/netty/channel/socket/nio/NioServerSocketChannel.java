@@ -128,6 +128,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
         return SocketUtils.localSocketAddress(javaChannel().socket());
     }
 
+    // TODO: 2021/1/23 调用java的channel绑定地址和端口
     @SuppressJava6Requirement(reason = "Usage guarded by java version check")
     @Override
     protected void doBind(SocketAddress localAddress) throws Exception {
@@ -145,6 +146,7 @@ public class NioServerSocketChannel extends AbstractNioMessageChannel
 
     @Override
     protected int doReadMessages(List<Object> buf) throws Exception {
+        // TODO: 2021/1/24 javaNio生成一个SocketChannel
         SocketChannel ch = SocketUtils.accept(javaChannel());
 
         try {

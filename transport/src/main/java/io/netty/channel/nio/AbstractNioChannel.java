@@ -377,6 +377,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         boolean selected = false;
         for (;;) {
             try {
+                // TODO: 2021/1/23 注意此处interest set是0，表示没有任何感兴趣的操作,因为此时还没有bind
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
@@ -409,8 +410,11 @@ public abstract class AbstractNioChannel extends AbstractChannel {
 
         readPending = true;
 
+        // TODO: 2021/1/23 获取当前监听的ops,之前注册的时候是0
         final int interestOps = selectionKey.interestOps();
         if ((interestOps & readInterestOp) == 0) {
+            // TODO: 2021/1/24 此处如果是ServerSocketChannel就注册OP_ACCEPT readInterestOp 等于 1 << 4
+            // TODO: 2021/1/23 此处如果是SocketChannel就注册OP_READ readInterestOp 等于 1 << 0
             selectionKey.interestOps(interestOps | readInterestOp);
         }
     }
